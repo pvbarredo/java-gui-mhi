@@ -34,9 +34,13 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.pobreng.pedro.model.CriticalValue;
 import com.pobreng.pedro.model.Device;
 import com.pobreng.pedro.model.Property;
 import javax.swing.JSeparator;
+import javax.swing.JScrollBar;
+import java.awt.Scrollbar;
+import javax.swing.JScrollPane;
 
 
 
@@ -57,6 +61,7 @@ public class Main {
 	
 	JPanel panel_1 ;
 	private JButton btnSubmit;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
@@ -87,7 +92,7 @@ public class Main {
 	private void initialize() {
 		frmPobrengPedro = new JFrame();
 		frmPobrengPedro.setTitle("APC MHI - POBRENG PEDRO ");
-		frmPobrengPedro.setBounds(100, 100, 450, 300);
+		frmPobrengPedro.setBounds(100, 100, 861, 369);
 		frmPobrengPedro.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmPobrengPedro.getContentPane().setLayout(new BorderLayout(0, 0));
 		
@@ -118,23 +123,48 @@ public class Main {
 				int x_axis = 6; 
 				
 				for (Property property : selectedDevice.getType().getProperty()) {
-					JLabel newLabel = new JLabel(property.getName());
-					JTextField newTextField = new JTextField();
-					newTextField.setColumns(10);
-					
-					
+					JLabel newLabel = new JLabel("Property : " + property.getName());
 					dynamicPropertyLabel.put(String.valueOf(property.getId()),newLabel);
-					dynamicPropertyTextfield.put(String.valueOf(property.getId()),newTextField);
-					
 					panel_1.add(newLabel, "6,"+ y_axis +", right, default");
-					panel_1.add(newTextField, "8,"+ y_axis +", fill, default");
 					y_axis++;
+					
+					for (CriticalValue criticalValue : property.getCritical_value()) {
+						JLabel newLabel2 = new JLabel("--"+ criticalValue.getDescription() + " - Condition: " + criticalValue.getCondition());
+						dynamicPropertyLabel.put(String.valueOf(criticalValue.getId())+ "Critical",newLabel2);
+						panel_1.add(newLabel2, "8,"+ y_axis +", right, default");
+						
+						y_axis++;
+						
+						JLabel newlabel3 = new JLabel("Min Value");
+						dynamicPropertyLabel.put(String.valueOf(criticalValue.getId())+ y_axis+ "MinVal",newlabel3);
+						panel_1.add(newlabel3, "6,"+ y_axis +", right, default");
+						
+						JTextField newCriticalValueTextField = new JTextField();
+						newCriticalValueTextField.setColumns(10);
+						dynamicPropertyTextfield.put(String.valueOf(criticalValue.getId())+ y_axis+"Min",newCriticalValueTextField);
+						panel_1.add(newCriticalValueTextField, "8,"+ y_axis +", fill, default");
+						
+						y_axis++;
+						
+						JLabel newlabel4 = new JLabel("Max Value");
+						dynamicPropertyLabel.put(String.valueOf(criticalValue.getId())+y_axis+ "MinVal",newlabel4);
+						panel_1.add(newlabel4, "6,"+ y_axis +", right, default");
+						
+						JTextField maxTextField = new JTextField();
+						maxTextField.setColumns(10);
+						dynamicPropertyTextfield.put(String.valueOf(criticalValue.getId())+y_axis+ "Max",maxTextField);
+						panel_1.add(maxTextField, "8,"+ y_axis +", fill, default");
+						
+						y_axis++;
+						
+						
+					}
+					y_axis++;
+					
 				}
-				
-				
-				
-				
-				 
+
+				panel_1.revalidate();
+				panel_1.repaint(); 
 			}
 			
 			private void removePropertyComponent() {
@@ -143,17 +173,20 @@ public class Main {
 					JLabel removeLabel = propertyLabel.getValue();
 					dynamicPropertyLabel.remove(removeLabel);
 					panel_1.remove(removeLabel);
+					panel_1.revalidate();
+					panel_1.repaint(); 
 				}
 				
 				for(Map.Entry<String, JTextField> propertyTextField : dynamicPropertyTextfield.entrySet()) {
 					JTextField removeTextField = propertyTextField.getValue();
 					dynamicPropertyTextfield.remove(removeTextField);
 					panel_1.remove(propertyTextField.getValue());
+					panel_1.revalidate();
+					panel_1.repaint(); 
 				}
 				
 				
-				panel_1.revalidate();
-				panel_1.repaint(); 
+				
 			
 				
 			}
@@ -271,6 +304,15 @@ public class Main {
 				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,}));
 		
 		JLabel lblName = new JLabel("Device Username");
@@ -278,6 +320,9 @@ public class Main {
 		
 		deviceUsername = new JLabel("Device Username");
 		panel_1.add(deviceUsername, "8, 4");
+		
+		btnSubmit = new JButton("Submit");
+		panel_1.add(btnSubmit, "10, 4");
 		
 		JLabel lblNewLabel = new JLabel("Device Name");
 		panel_1.add(lblNewLabel, "6, 6, right, default");
@@ -299,8 +344,8 @@ public class Main {
 		longitudeTextField.setColumns(10);
 		panel_1.add(longitudeTextField, "8, 10, fill, default");
 		
-		btnSubmit = new JButton("Submit");
-		panel_1.add(btnSubmit, "6, 19");
+		scrollPane = new JScrollPane();
+		frmPobrengPedro.getContentPane().add(scrollPane, BorderLayout.SOUTH);
 		
 	}
 
