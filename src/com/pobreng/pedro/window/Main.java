@@ -65,10 +65,10 @@ public class Main {
 	private JScrollPane scrollPane;
 	private JButton btnClearAllDevice;
 	private JButton btnSeedData;
-	private static String APP_URL = "http://localhost:8000";
+	private static String APP_URL = "http://apc-mhi.herokuapp.com";
 	
 	Device selectedDevice;
-
+	static Dialog dialog;
 	/**
 	 * Launch the application.
 	 */
@@ -79,8 +79,11 @@ public class Main {
 					Main window = new Main();
 					window.frmPobrengPedro.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
-				}
+					
+				dialog = new Dialog(e.getMessage());
+				dialog.dialogMessage.setVisible(true);
+				
+			  }
 			}
 		});
 	}
@@ -194,7 +197,7 @@ public class Main {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-
+					
 					URL url = new URL(APP_URL + "/device");
 					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 					conn.setRequestMethod("GET");
@@ -209,7 +212,6 @@ public class Main {
 						(conn.getInputStream())));
 
 					String output;
-					System.out.println("Output from Server .... \n");
 					while ((output = br.readLine()) != null) {
 						
 						JSONObject obj = new JSONObject(output);
@@ -231,22 +233,19 @@ public class Main {
 
 					conn.disconnect();
 
-				  } catch (MalformedURLException e) {
-
-					e.printStackTrace();
-
-				  } catch (IOException e) {
-
-					e.printStackTrace();
-
+				  } catch (Exception e) {
+					
+					dialog = new Dialog(e.getMessage());
+					dialog.dialogMessage.setVisible(true);
+					
 				  }
-
 				
 				
 			}
 		});
 		
 		btnSeedData = new JButton("Seed Data");
+		btnSeedData.setEnabled(false);
 		btnSeedData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -260,19 +259,17 @@ public class Main {
 						throw new RuntimeException("Failed : HTTP error code : "
 								+ conn.getResponseCode());
 					}
-
 					
+					dialog = new Dialog("Success");
+					dialog.dialogMessage.setVisible(true);
 
 					conn.disconnect();
 
-				  } catch (MalformedURLException ex) {
-
-					ex.printStackTrace();
-
-				  } catch (IOException ex) {
-
-					ex.printStackTrace();
-
+				  }catch (Exception ex) {
+						
+					dialog = new Dialog(ex.getMessage());
+					dialog.dialogMessage.setVisible(true);
+					
 				  }
 				
 			}
@@ -293,19 +290,16 @@ public class Main {
 						throw new RuntimeException("Failed : HTTP error code : "
 								+ conn.getResponseCode());
 					}
-
+					dialog = new Dialog("Success");
+					dialog.dialogMessage.setVisible(true);
 					
-
 					conn.disconnect();
 
-				  } catch (MalformedURLException ex) {
-
-					ex.printStackTrace();
-
-				  } catch (IOException ex) {
-
-					ex.printStackTrace();
-
+				  }catch (Exception ex) {
+						
+					dialog = new Dialog(ex.getMessage());
+					dialog.dialogMessage.setVisible(true);
+					
 				  }
 			}
 		});
@@ -400,7 +394,9 @@ public class Main {
 						System.out.println("\nSending 'POST' request to URL : " + url);
 						System.out.println("Post parameters : " + urlParameters);
 						System.out.println("Response Code : " + responseCode);
-
+						
+						
+						
 						BufferedReader in = new BufferedReader(
 						        new InputStreamReader(conn.getInputStream()));
 						String inputLine;
@@ -413,10 +409,15 @@ public class Main {
 						
 						//print result
 						System.out.println(response.toString());
+						dialog = new Dialog("Success " + response.toString());
+						dialog.dialogMessage.setVisible(true);
 						
-					} catch (Exception e2) {
-						// TODO: handle exception
-					}
+					}catch (Exception ex) {
+						
+						dialog = new Dialog(ex.getMessage());
+						dialog.dialogMessage.setVisible(true);
+						
+					  }
 				}
 				
 			}
